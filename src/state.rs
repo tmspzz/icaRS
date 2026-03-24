@@ -2,6 +2,7 @@ use time::OffsetDateTime;
 
 use crate::asd_b_types::Message;
 use crate::flight::Flight;
+use crate::hex_db::FlightInfo;
 use std::collections::hash_map::Entry;
 use std::collections::HashMap;
 
@@ -16,21 +17,21 @@ pub struct AppState {
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub struct UIState {
     pub(crate) selected: usize,
-    pub(crate) info_panel_visibility: InfoPanelVisibility,
+    pub(crate) info_panel_state: InfoPanelState,
 }
 
 #[derive(Debug, PartialEq, Eq, Clone)]
-pub enum InfoPanelVisibility {
+pub enum InfoPanelState {
     Loading,
-    Open(InfoPanelState),
+    Open { model: FlightInfo },
     Error(String),
     Closed,
 }
 
-#[derive(Debug, PartialEq, Eq, Clone)]
-pub struct InfoPanelState {
-    additional_info: String,
-}
+// #[derive(Debug, PartialEq, Eq, Clone)]
+// pub struct InfoPanelState {
+//     flight_info: FlightInfo,
+// }
 
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub struct TimeStampedFlight {
@@ -68,7 +69,7 @@ impl AppState {
             connected: false,
             ui_state: UIState {
                 selected: 0,
-                info_panel_visibility: InfoPanelVisibility::Closed,
+                info_panel_state: InfoPanelState::Closed,
             },
             last_error: None,
         }

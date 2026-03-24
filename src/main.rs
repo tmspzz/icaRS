@@ -53,10 +53,10 @@ pub enum AppCommand {
     FetchFlightInfo { hex_id: String },
 }
 
-#[derive(Debug, PartialEq, Eq, Clone)]
+#[derive(Debug)]
 pub enum AppEvent {
     Ingest(SSB1StreamEvent),
-    FlightInfoEvent(FlightInfo),
+    FlightInfoEvent(anyhow::Result<FlightInfo>),
 }
 
 #[tokio::main]

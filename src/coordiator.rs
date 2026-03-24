@@ -1,4 +1,4 @@
-use crate::hex_db::{get_flight_info};
+use crate::hex_db::get_flight_info;
 use crate::sbs1_ingest::read_ssb1_stream;
 use crate::sbs1_ingest::{IngestCommand, SSB1StreamEvent};
 use crate::{AppCommand, AppEvent};
@@ -27,11 +27,9 @@ pub async fn run_coordinator(
                         break
                     }
                     AppCommand::FetchFlightInfo{ hex_id } => {
-                        let get_flight_info_result = get_flight_info(hex_id).await;
-                        match get_flight_info_result {
-                            Ok(flight_info) => event_tx.send(AppEvent::FlightInfoEvent(flight_info)).unwrap_or_default(),
-                            _ => {}
-                        }
+                        let result = get_flight_info(hex_id).await.map_err(anyhow::Error::from);
+                        // Send the result regardless of Ok/Err so the UI/State can react to the failure
+                        let _ = event_tx.send(AppEvent::FlightInfoEvent(result));
                     }
                 }
             }

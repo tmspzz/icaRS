@@ -33,6 +33,5 @@ pub async fn get_flight_info(asdb_hex_id: String) -> Result<FlightInfo, HexDbErr
         .send()
         .await?;
     let flight_info = response.json::<FlightInfo>().await?;
-    println!("{:?}", flight_info);
     Ok(flight_info)
 }
