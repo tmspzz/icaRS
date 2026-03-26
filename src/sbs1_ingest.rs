@@ -11,6 +11,7 @@ pub enum IngestCommand {
 }
 
 #[derive(Debug, PartialEq, Eq, Clone)]
+#[allow(clippy::large_enum_variant)]
 pub enum SSB1StreamEvent {
     Connected,
     Disconnected,
@@ -46,7 +47,6 @@ pub async fn read_ssb1_stream(
                     Some(IngestCommand::Stop) | None => {
                         return;
                     }
-                    _ => {}
                 }
             }
 

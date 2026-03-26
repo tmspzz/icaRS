@@ -1,5 +1,5 @@
-
 #[derive(PartialEq, Eq, Debug, Clone, Copy)]
+#[allow(clippy::upper_case_acronyms)]
 pub enum MessageType {
     MSG,
     SEL,
@@ -192,7 +192,10 @@ impl Msg {
             .ok_or_else(|| "Missing message type field".to_string())?;
         let message_type = MessageType::parse(raw_message_type)?;
         if message_type != MessageType::MSG {
-            return Err(format!("Msg only supports MSG rows, got {:?}", message_type));
+            return Err(format!(
+                "Msg only supports MSG rows, got {:?}",
+                message_type
+            ));
         }
 
         let raw_transmission_type = fields
@@ -354,6 +357,7 @@ impl Msg {
 }
 
 #[derive(Debug, PartialEq, Eq, Clone)]
+#[allow(clippy::upper_case_acronyms)]
 pub enum Message {
     MSG {
         msg: Msg,
@@ -533,23 +537,21 @@ impl Message {
 
     pub fn hex_ident(&self) -> String {
         match self {
-            Self::MSG { msg } => {
-                match msg {
-                    Msg::Msg1 { hex_ident, .. } => hex_ident.clone(),
-                    Msg::Msg2 { hex_ident, .. } => hex_ident.clone(),
-                    Msg::Msg3 { hex_ident, .. } => hex_ident.clone(),
-                    Msg::Msg4 { hex_ident, .. } => hex_ident.clone(),
-                    Msg::Msg5 { hex_ident, .. } => hex_ident.clone(),
-                    Msg::Msg6 { hex_ident, .. } => hex_ident.clone(),
-                    Msg::Msg7 { hex_ident, .. } => hex_ident.clone(),
-                    Msg::Msg8 { hex_ident, .. } => hex_ident.clone()
-                }
-            }
-            Self::SEL { hex_ident, .. } |
-            Self::ID { hex_ident, ..} |
-            Self::AIR { hex_ident, ..} |
-            Self::STA { hex_ident, ..} |
-            Self::CLK { hex_ident, ..} => { hex_ident.clone() }
+            Self::MSG { msg } => match msg {
+                Msg::Msg1 { hex_ident, .. } => hex_ident.clone(),
+                Msg::Msg2 { hex_ident, .. } => hex_ident.clone(),
+                Msg::Msg3 { hex_ident, .. } => hex_ident.clone(),
+                Msg::Msg4 { hex_ident, .. } => hex_ident.clone(),
+                Msg::Msg5 { hex_ident, .. } => hex_ident.clone(),
+                Msg::Msg6 { hex_ident, .. } => hex_ident.clone(),
+                Msg::Msg7 { hex_ident, .. } => hex_ident.clone(),
+                Msg::Msg8 { hex_ident, .. } => hex_ident.clone(),
+            },
+            Self::SEL { hex_ident, .. }
+            | Self::ID { hex_ident, .. }
+            | Self::AIR { hex_ident, .. }
+            | Self::STA { hex_ident, .. }
+            | Self::CLK { hex_ident, .. } => hex_ident.clone(),
         }
     }
 }

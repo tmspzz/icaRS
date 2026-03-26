@@ -173,9 +173,7 @@ impl Flight {
             | Message::STA { hex_ident, .. }
             | Message::CLK { hex_ident, .. } => {
                 debug_assert_eq!(self.asdb_hex_id, *hex_ident);
-                if self.asdb_hex_id != hex_ident.as_str() {
-                    return;
-                }
+                if self.asdb_hex_id != hex_ident.as_str() {}
             }
         }
     }

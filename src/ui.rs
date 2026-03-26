@@ -18,7 +18,7 @@ use ratatui::{
 };
 use std::{io, time::Duration};
 use time::UtcOffset;
-use tokio::sync::mpsc::{error, UnboundedReceiver, UnboundedSender};
+use tokio::sync::mpsc::{UnboundedReceiver, UnboundedSender};
 
 // use unicode_width::UnicodeWidthStr;
 pub fn run_ui(
@@ -62,11 +62,8 @@ fn restore_terminal(terminal: &mut Terminal<CrosstermBackend<io::Stdout>>) -> io
 }
 
 fn drain_events(event_rx: &mut UnboundedReceiver<AppEvent>, app_state: &mut AppState) {
-    loop {
-        match event_rx.try_recv() {
-            Ok(event) => apply_app_event(event, app_state),
-            Err(error::TryRecvError::Empty | error::TryRecvError::Disconnected) => break,
-        }
+    while let Ok(event) = event_rx.try_recv() {
+        apply_app_event(event, app_state);
     }
 }
 
@@ -287,7 +284,7 @@ fn list_table_widget(flights: Vec<&TimeStampedFlight>) -> Table<'_> {
 }
 
 fn table_widget(flights: Vec<&TimeStampedFlight>) -> Table<'_> {
-    let lenghts = constraints_len_calculator(&flights);
+    let lenghts = constraints_len_calculator();
     let constraints = [
         Constraint::Min(lenghts.0),
         Constraint::Min(lenghts.1),
@@ -311,29 +308,17 @@ fn table_widget(flights: Vec<&TimeStampedFlight>) -> Table<'_> {
         .block(Block::default().title("Flight").borders(Borders::ALL))
 }
 
-fn constraints_len_calculator(
-    time_stamped_flights: &Vec<&TimeStampedFlight>,
-) -> (u16, u16, u16, u16, u16, u16, u16, u16, u16, u16, u16, u16) {
-    // let flights = time_stamped_flights
-    //     .into_iter()
-    //     .map(TimeStampedFlight::flight)
-
-    // let call_sign_lenght = flights.map(Flight::callsign)
-    //     .map(Option::unwrap_or_default)
-    //     .map(UnicodeWidthStr::width)
-    //     .max()
-    //     .unwrap_or_default();
-
+fn constraints_len_calculator() -> (u16, u16, u16, u16, u16, u16, u16, u16, u16, u16, u16, u16) {
     (6, 6, 5, 5, 4, 9, 9, 5, 4, 1, 1, 5)
 }
 
-impl Into<Row<'_>> for &TimeStampedFlight {
-    fn into(self) -> Row<'static> {
+impl From<&TimeStampedFlight> for Row<'_> {
+    fn from(val: &TimeStampedFlight) -> Self {
         let TimeStampedFlight {
             flight,
             num_messages,
             ..
-        } = self;
+        } = val;
         Row::new(vec![
             flight.asdb_hex_id.clone(),
             flight.callsign.clone().unwrap_or_default(),

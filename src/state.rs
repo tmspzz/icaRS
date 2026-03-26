@@ -54,7 +54,7 @@ impl TimeStampedFlight {
     pub fn update_from_message(&mut self, message: &Message) {
         self.flight.update_from_message(message);
         self.last_seen = OffsetDateTime::now_utc();
-        self.num_messages = self.num_messages + 1;
+        self.num_messages += 1;
     }
 
     pub fn flight(&self) -> &Flight {
